@@ -36,12 +36,14 @@ const display = document.querySelector('.display');
 
 buttons2.forEach(function(button) {
    button.addEventListener('click', () => {
-      if (newOperandCheck === false){
+     if (display.textContent.length > 12 && newOperandCheck === false){
+        return;
+     }  else if (newOperandCheck === false){
       calculatorInput += button.id;
       display.textContent += button.id;
       } else {
          display.textContent = '';
-         calculatorInput = '';
+         calculatorInput = 0;
          calculatorInput += button.id;
          display.textContent += button.id;
          newOperandCheck = false;
@@ -71,18 +73,20 @@ const operatorsArray = Array.from(operators);
 
  operatorsArray.forEach(function(button) {
    button.addEventListener('click', () => {
-   calculatorArray.push(parseInt(calculatorInput));
+   calculatorArray.push(parseFloat(calculatorInput));
    if (calculatorArray.length === 2) {
-            display.textContent = operate(calculatorArray, operator);
-            calculatorArray.push(operate(calculatorArray, operator));
-            calculatorArray.splice(0, 2);
-            calculatorInput = '';  
-            operator = button.id;
-            newOperandCheck = true;
+      display.textContent = operate(calculatorArray, operator);
+      calculatorArray.push(operate(calculatorArray, operator));
+      calculatorArray.splice(0, 2);
+      calculatorInput = '';  
+      operator = button.id;
+      newOperandCheck = true;
+      decimalCheck = false
    } else {   
       operator = button.id;
       calculatorInput = '';
       newOperandCheck = true;
+      decimalCheck = false
    }
    })
 });    
@@ -92,28 +96,45 @@ const operatorsArray = Array.from(operators);
 const equalButton = document.getElementById('equal-button'); 
 
 // equal button click event listener, which pushes the inputs to the array, then calls the operate() onto the array to deliver the result to the display. This result is also saved into 
-// the array if another calculation is needed.
+// the array if another calculation is needed. removed parseInt from calculatorInput and tried converting inputs to float
 
 
 equalButton.addEventListener('click', () => {
    if (calculatorInput && calculatorArray.length === 0) {
-      display.textContent = calculatorInput;
+      display.textContent = parseFloat(calculatorInput);
       newOperandCheck = true;
+      decimalCheck = false
    } else if 
       (calculatorInput && calculatorArray.length === 1) { 
-      calculatorArray.push(parseInt(calculatorInput));
+      calculatorArray.push(parseFloat(calculatorInput));
       display.textContent = operate(calculatorArray, operator);
       calculatorInput = operate(calculatorArray, operator);
       calculatorArray = [];  
       newOperandCheck = true;
+      decimalCheck = false
    } else if 
       (calculatorInput === '' && calculatorArray.length === 1) {
          display.textContent = calculatorArray[0];
          newOperandCheck = true;
+         decimalCheck = false
    } else {
       display.textContent = '0';
       calculatorInput = 0;
       newOperandCheck = true;
+      decimalCheck = false
    }
    
+});
+
+const decimal = document.getElementById('decimal');
+let decimalCheck = false;
+
+decimal.addEventListener('click', () => {
+ if (decimalCheck === false) {
+    display.textContent += '.';
+    calculatorInput += '.';
+    decimalCheck = true;
+ } else {
+    return;
+ }
 });
